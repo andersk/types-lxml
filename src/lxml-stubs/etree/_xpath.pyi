@@ -4,7 +4,7 @@
 #
 
 import sys
-from abc import abstractmethod
+from abc import ABCMeta, abstractmethod
 from collections.abc import (
     Callable,
     Iterable,
@@ -13,7 +13,6 @@ from types import ModuleType
 from typing import (
     Any,
     Generic,
-    Protocol,
     final,
     overload,
 )
@@ -54,7 +53,7 @@ class XPathSyntaxError(LxmlSyntaxError, XPathError):
     """Error in XPath expression"""
 
 @disjoint_base
-class _XPathEvaluatorBase(Protocol):
+class _XPathEvaluatorBase(metaclass=ABCMeta):
     @property
     def error_log(self) -> _ListErrorLog: ...
     @abstractmethod

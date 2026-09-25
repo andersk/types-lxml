@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import bz2
-import functools
 import gzip
 import io
 import logging
@@ -14,12 +13,12 @@ from collections.abc import (
 from contextlib import AbstractContextManager, nullcontext
 from pathlib import Path, PurePosixPath
 from typing import (
+    IO,
     Any,
     BinaryIO,
     Literal,
     TextIO,
     cast,
-    overload,
 )
 from urllib.request import urlopen
 from urllib.response import addinfourl
@@ -313,33 +312,24 @@ def disposable_attrib(disposable_element: _e._Element) -> _e._Attrib:
     return disposable_element.attrib
 
 
-@overload
 def _get_compressed_fp_from(
-    zmode: Literal["gz"],
-) -> Callable[[Path], gzip.GzipFile]: ...
-@overload
-def _get_compressed_fp_from(
-    zmode: Literal["bz2"],
-) -> Callable[[Path], bz2.BZ2File]: ...
-@overload
-def _get_compressed_fp_from(
-    zmode: Literal["xz"],
-) -> Callable[[Path], lzma.LZMAFile]: ...
-def _get_compressed_fp_from(zmode: str) -> Any:
-    param_name = {
-        "gz": (gzip.GzipFile, "fileobj"),
-        "bz2": (bz2.BZ2File, "filename"),
-        "xz": (lzma.LZMAFile, "filename"),
+    zmode: Literal["gz", "bz2", "xz"],
+) -> Callable[[Path], io.BufferedIOBase]:
+    openers: dict[
+        str, Callable[[IO[bytes], Literal["rb", "wb"]], io.BufferedIOBase]
+    ] = {
+        "gz": lambda buffer, mode: gzip.GzipFile(fileobj=buffer, mode=mode),
+        "bz2": lambda buffer, mode: bz2.BZ2File(buffer, mode),
+        "xz": lambda buffer, mode: lzma.LZMAFile(buffer, mode),
     }
+    opener = openers[zmode]
 
-    def _wrapped(path: Path, /) -> Any:
+    def _wrapped(path: Path, /) -> io.BufferedIOBase:
         buffer = io.BytesIO()
-        # pyrefly: ignore[bad-argument-type]
-        zobj = functools.partial(param_name[zmode][0], **{param_name[zmode][1]: buffer})
-        with path.open("rb") as f, zobj(mode="wb") as z:
-            z.write(f.read())
+        with opener(buffer, "wb") as z:
+            z.write(path.read_bytes())
         buffer.seek(0, io.SEEK_SET)
-        return zobj(mode="rb")
+        return opener(buffer, "rb")
 
     return _wrapped
 

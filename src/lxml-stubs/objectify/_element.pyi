@@ -135,11 +135,13 @@ class NumberElement(ObjectifiedDataElement, metaclass=abc.ABCMeta):
 #
 # Not doing the same for StringElement and BoolElement though,
 # each for different reason.
-class IntElement(NumberElement, int):  # type: ignore[misc]  # ty: ignore[instance-layout-conflict]
+# pyrefly: ignore[invalid-inheritance]
+class IntElement(NumberElement, int):  # type: ignore[misc]  # pyright: ignore[reportGeneralTypeIssues]  # ty: ignore[instance-layout-conflict]
     @property
     def pyval(self) -> int: ...
 
-class FloatElement(NumberElement, float):  # type: ignore[misc]  # ty: ignore[instance-layout-conflict]
+# pyrefly: ignore[invalid-inheritance]
+class FloatElement(NumberElement, float):  # type: ignore[misc]  # pyright: ignore[reportGeneralTypeIssues]  # ty: ignore[instance-layout-conflict]
     @property
     def pyval(self) -> float: ...
 

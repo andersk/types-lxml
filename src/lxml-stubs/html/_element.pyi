@@ -333,9 +333,9 @@ class Classes(MutableSet[str]):
 # Beware of the reversed MRO order -- fatal dunders from __ContentOnlyElement
 # are dominant in runtime
 #
-class HtmlProcessingInstruction(etree.PIBase, HtmlElement): ...  # type: ignore[misc]  # pyright: ignore[reportIncompatibleMethodOverride]
-class HtmlComment(etree.CommentBase, HtmlElement): ...  # type: ignore[misc]  # pyright: ignore[reportIncompatibleMethodOverride]
-class HtmlEntity(etree.EntityBase, HtmlElement): ...  # type: ignore[misc]  # pyright: ignore[reportIncompatibleMethodOverride]
+class HtmlProcessingInstruction(etree.PIBase, HtmlElement): ...  # type: ignore[misc]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
+class HtmlComment(etree.CommentBase, HtmlElement): ...  # type: ignore[misc]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
+class HtmlEntity(etree.EntityBase, HtmlElement): ...  # type: ignore[misc]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
 
 #
 # Factory func, there is no counterpart for SubElement though

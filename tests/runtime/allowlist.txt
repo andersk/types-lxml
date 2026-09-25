@@ -82,6 +82,7 @@ lxml\.etree\.LIBXML_FEATURES
 # Implementation intentionally differs
 lxml\.etree\._Element\.__init__
 lxml\.etree\._ErrorLog
+lxml\.etree\._XPathEvaluatorBase\.__init__
 lxml\.etree\.__all__
 lxml\.etree\.ElementDefaultClassLookup\.__init__
 lxml\.etree\.HTMLPullParser\.__init__

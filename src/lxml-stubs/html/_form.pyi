@@ -83,7 +83,7 @@ class _InputMixin:
     @name.deleter
     def name(self) -> None: ...
 
-class TextareaElement(_InputMixin, HtmlElement):
+class TextareaElement(_InputMixin, HtmlElement):  # ty: ignore[invalid-method-override]
     @property
     def value(self) -> str | None: ...
     @value.setter
@@ -91,7 +91,7 @@ class TextareaElement(_InputMixin, HtmlElement):
     @value.deleter
     def value(self) -> None: ...
 
-class SelectElement(_InputMixin, HtmlElement):
+class SelectElement(_InputMixin, HtmlElement):  # ty: ignore[invalid-method-override]
     @property
     def multiple(self) -> bool: ...
     @multiple.setter
@@ -160,7 +160,7 @@ class CheckboxValues(MutableSet[str]):
         self, item: str
     ) -> None: ...
 
-class InputElement(_InputMixin, HtmlElement):
+class InputElement(_InputMixin, HtmlElement):  # ty: ignore[invalid-method-override]
     @property
     def type(self) -> str: ...
     @type.setter
