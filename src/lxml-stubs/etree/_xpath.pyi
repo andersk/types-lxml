@@ -52,6 +52,26 @@ class XPathResultError(XPathEvalError):
 class XPathSyntaxError(LxmlSyntaxError, XPathError):
     """Error in XPath expression"""
 
+# Stub-only class, not exported by lxml. An instance is passed as
+# the first argument to every XPath extension function; at runtime it
+# is either an _XPathContext or an _XSLTContext, depending on whether
+# the function is called from XPath or XSLT.
+class _BaseContext:
+    """Context object passed as first argument to XPath extension functions
+
+    See Also
+    --------
+    - [User documentation](https://lxml.de/extensions.html#the-xpath-context)
+    """
+    @property
+    def context_node(self) -> _Element:
+        """The context node, i.e. the element where the current
+        function is called"""
+    @property
+    def eval_context(self) -> dict[Any, Any]:
+        """A dictionary that is local to the evaluation, which allows
+        functions to keep state between separate calls"""
+
 @disjoint_base
 class _XPathEvaluatorBase(metaclass=ABCMeta):
     @property

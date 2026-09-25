@@ -5,12 +5,13 @@ from collections.abc import Callable, Iterable
 from inspect import Parameter
 from io import BytesIO, StringIO
 from types import NoneType
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import pytest
 from hypothesis import HealthCheck, given, settings
 from lxml.etree import (
     ETXPath,
+    FunctionNamespace,
     XPath,
     XPathDocumentEvaluator,
     XPathElementEvaluator,
@@ -41,6 +42,11 @@ if sys.version_info >= (3, 11):
     from typing import reveal_type
 else:
     from typing_extensions import reveal_type
+
+if TYPE_CHECKING:
+    from lxml.etree._xpath import (  # pyright: ignore[reportMissingModuleSource]
+        _BaseContext,
+    )
 
 
 # -- _Element.xpath method tests --
@@ -416,6 +422,27 @@ class TestXPathExtensions:
         xpath_obj = XPath("my:myfunc('x')", namespaces=ns, extensions=ext)
         result = xpath_obj(xml2_root)
         assert result == "ext_result"
+
+
+class TestFunctionNamespaceContext:
+    def test_context(self, xml2_root: _Element) -> None:
+        ns = FunctionNamespace("http://example.org/test_context")
+
+        @ns
+        def count_calls(context: _BaseContext, arg: Any) -> int:
+            reveal_type(context.context_node)
+            eval_ctx = reveal_type(context.eval_context)
+            count: int = eval_ctx.get("count", 0) + 1
+            eval_ctx["count"] = count
+            return count
+
+        result = xml2_root.xpath(
+            "//item[t:count_calls(.) = 2]",
+            namespaces={"t": "http://example.org/test_context"},
+        )
+        assert len(result) == 1
+        assert ns["count_calls"] is count_calls
+        del ns["count_calls"]
 
 
 class TestXPathSmartStrings:

@@ -16,6 +16,12 @@ from typing import (
 
 from .cssselect import LxmlTranslator
 from .etree import HTMLParser, QName, XMLParser, _Element, _ElementTree
+from .etree._xpath import _BaseContext
+
+if sys.version_info >= (3, 10):
+    from typing import Concatenate, TypeAlias
+else:
+    from typing_extensions import Concatenate, TypeAlias
 
 if sys.version_info >= (3, 14):
     from io import Reader, Writer
@@ -126,6 +132,9 @@ _XPathNSArg = (
 # https://lxml.de/extensions.html#xpath-extension-functions
 # The returned result of extension function itself is not exactly Any,
 # but too complex to list.
+_XPathExtFunc: TypeAlias = Callable[Concatenate[_BaseContext, ...], Any]
+_XPathExtFuncT = TypeVar("_XPathExtFuncT", bound=_XPathExtFunc)
+
 # And xpath extension func really checks for dict in implementation,
 # not just any mapping.
 _XPathExtFuncArg = (
