@@ -140,11 +140,11 @@ _XPathExtFuncT = TypeVar("_XPathExtFuncT", bound=_XPathExtFunc)
 _XPathExtFuncArg = (
     Iterable[SupportsLaxItems[
         tuple[str | None, str],
-        Callable[..., Any],
+        _XPathExtFunc,
     ]]
-    | dict[tuple[str       , str], Callable[..., Any]]  # noqa: E203
-    | dict[tuple[      None, str], Callable[..., Any]]  # noqa: E201,E272
-    | dict[tuple[str | None, str], Callable[..., Any]]
+    | dict[tuple[str       , str], _XPathExtFuncT]  # noqa: E203
+    | dict[tuple[      None, str], _XPathExtFuncT]  # noqa: E201,E272
+    | dict[tuple[str | None, str], _XPathExtFuncT]
 )  # fmt: skip
 
 # XPathObject documented in https://lxml.de/xpathxslt.html#xpath-return-values

@@ -196,6 +196,18 @@ class TestElementXPathExtensions:
         result = xml2_root.xpath("lower(//orderperson)", extensions=ext)
         assert result == "john smith"
 
+    def test_extensions_context(self, xml2_root: _Element) -> None:
+        def get_tag(context: _BaseContext, nodes: list[Any]) -> str:
+            node = reveal_type(context.context_node)
+            return str(node.tag)
+
+        ext = {("http://myns", "tag"): get_tag}
+        ns = {"my": "http://myns"}
+        result = xml2_root.xpath(
+            "//orderperson[my:tag(.) = 'orderperson']", namespaces=ns, extensions=ext
+        )
+        assert len(result) == 1
+
     def test_extensions_list_of_dicts(self, xml2_root: _Element) -> None:
         def ext_func(context: Any, arg: Any) -> int:
             return 42
@@ -422,6 +434,18 @@ class TestXPathExtensions:
         xpath_obj = XPath("my:myfunc('x')", namespaces=ns, extensions=ext)
         result = xpath_obj(xml2_root)
         assert result == "ext_result"
+
+    def test_extensions_context(self, xml2_root: _Element) -> None:
+        def count_calls(context: _BaseContext) -> int:
+            eval_ctx = reveal_type(context.eval_context)
+            count: int = eval_ctx.get("count", 0) + 1
+            eval_ctx["count"] = count
+            return count
+
+        ext = {(None, "count_calls"): count_calls}
+        xpath_obj = XPath("//item[count_calls() = 2]", extensions=ext)
+        result = xpath_obj(xml2_root)
+        assert len(result) == 1
 
 
 class TestFunctionNamespaceContext:

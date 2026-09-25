@@ -5,10 +5,7 @@
 
 import sys
 from abc import ABCMeta, abstractmethod
-from collections.abc import (
-    Callable,
-    Iterable,
-)
+from collections.abc import Iterable
 from types import ModuleType
 from typing import (
     Any,
@@ -23,7 +20,9 @@ from .._types import (
     SupportsLaxItems,
     _ElementOrTree,
     _TextArg,
+    _XPathExtFunc,
     _XPathExtFuncArg,
+    _XPathExtFuncT,
     _XPathNSArg,
     _XPathObject,
     _XPathVarArg,
@@ -96,7 +95,7 @@ class XPath(_XPathEvaluatorBase):
         path: _TextArg,
         *,
         namespaces: _XPathNSArg | None = None,
-        extensions: _XPathExtFuncArg | None = None,
+        extensions: _XPathExtFuncArg[_XPathExtFuncT] | None = None,
         regexp: bool = True,
         smart_strings: bool = True,
     ) -> None: ...
@@ -119,7 +118,7 @@ class ETXPath(XPath):
         self,
         path: _TextArg,
         *,
-        extensions: _XPathExtFuncArg | None = None,
+        extensions: _XPathExtFuncArg[_XPathExtFuncT] | None = None,
         regexp: bool = True,
         smart_strings: bool = True,
     ) -> None: ...
@@ -137,7 +136,7 @@ class XPathElementEvaluator(_XPathEvaluatorBase):
         element: _Element,
         *,
         namespaces: _XPathNSArg | None = None,
-        extensions: _XPathExtFuncArg | None = None,
+        extensions: _XPathExtFuncArg[_XPathExtFuncT] | None = None,
         regexp: bool = True,
         smart_strings: bool = True,
     ) -> None: ...
@@ -161,7 +160,7 @@ class XPathDocumentEvaluator(XPathElementEvaluator):
         etree: _ElementTree,
         *,
         namespaces: _XPathNSArg | None = None,
-        extensions: _XPathExtFuncArg | None = None,
+        extensions: _XPathExtFuncArg[_XPathExtFuncT] | None = None,
         regexp: bool = True,
         smart_strings: bool = True,
     ) -> None: ...
@@ -171,7 +170,7 @@ def XPathEvaluator(
     etree_or_element: _Element,
     *,
     namespaces: _XPathNSArg | None = None,
-    extensions: _XPathExtFuncArg | None = None,
+    extensions: _XPathExtFuncArg[_XPathExtFuncT] | None = None,
     regexp: bool = True,
     smart_strings: bool = True,
 ) -> XPathElementEvaluator: ...
@@ -180,7 +179,7 @@ def XPathEvaluator(
     etree_or_element: _ElementTree,
     *,
     namespaces: _XPathNSArg | None = None,
-    extensions: _XPathExtFuncArg | None = None,
+    extensions: _XPathExtFuncArg[_XPathExtFuncT] | None = None,
     regexp: bool = True,
     smart_strings: bool = True,
 ) -> XPathDocumentEvaluator: ...
@@ -218,7 +217,7 @@ def Extension(
     function_mapping: dict[str, str] | Iterable[str] | None = None,
     *,
     ns: str,
-) -> dict[tuple[str, str], Callable[..., Any]]:
+) -> dict[tuple[str, str], _XPathExtFunc]:
     """Build a dictionary of extension functions from the functions
     defined in a module or the methods of an object.
 
@@ -239,7 +238,7 @@ def Extension(
     function_mapping: dict[str, str] | Iterable[str] | None = None,
     *,
     ns: None = None,
-) -> dict[tuple[None, str], Callable[..., Any]]:
+) -> dict[tuple[None, str], _XPathExtFunc]:
     """Build a dictionary of extension functions from the functions
     defined in a module or the methods of an object.
 
