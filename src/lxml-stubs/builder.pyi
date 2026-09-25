@@ -137,6 +137,6 @@ class ElementMaker(Generic[_ET_co]):
     @property
     def _nsmap(self) -> dict[str | bytes | None, str | bytes] | None: ...
     @property
-    def _typemap(self) -> dict[type[Any], Callable[[_ET_co, Any], None]]: ...
+    def _typemap(self) -> dict[type[Any], Callable[[_ET_co, Any], None]]: ...  # ty: ignore[invalid-generic-class]
 
 E: ElementMaker[_Element]
