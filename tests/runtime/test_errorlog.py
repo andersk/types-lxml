@@ -407,7 +407,7 @@ class TestPyErrorLogMethods:
     def test_receive_arg_bad_1(self, pylog: PyErrorLog, thing: Any) -> None:
         raise_cm = raise_no_attribute if thing is None else raise_wrong_arg_type
         with raise_cm:
-            pylog.receive(thing)
+            pylog.receive(thing)  # pyright: ignore[reportArgumentType]
 
     @given(iterable_of=_st.fixed_item_iterables())
     def test_receive_arg_bad_2(self, pylog: PyErrorLog, iterable_of: Any) -> None:
